@@ -29,7 +29,7 @@ TEST_CASE("stress testing") {
     auto t = std::thread([w] {
       w->notify();
     });
+    t.detach();
     w->wait_notice();
-    t.join();
   }
 }
