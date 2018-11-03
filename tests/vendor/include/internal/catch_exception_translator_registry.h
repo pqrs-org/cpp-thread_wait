@@ -1,1 +1,0 @@
-../../cget/pkg/catchorg__Catch2/install/include/internal/catch_exception_translator_registry.h

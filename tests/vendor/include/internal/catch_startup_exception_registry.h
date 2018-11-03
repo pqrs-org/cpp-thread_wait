@@ -1,1 +1,0 @@
-../../cget/pkg/catchorg__Catch2/install/include/internal/catch_startup_exception_registry.h
