@@ -8,4 +8,4 @@ clean:
 	rm -r build
 
 run:
-	./build/test
+	./build/example
