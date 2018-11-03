@@ -25,12 +25,12 @@ public:
   //   A bad example:
   //     ----------------------------------------
   //     {
-  //       auto w = pqrs::thread_wait();
-  //       std::thread th([&w] {
+  //       pqrs::thread_wait w;
+  //       std::thread t([&w] {
   //         w.notify(); // `notify` rarely causes SEGV.
-  //       })
+  //       });
+  //       t.detach();
   //       w.wait_notice();
-  //       th.join();
   //     }
   //     ----------------------------------------
   //
@@ -38,11 +38,11 @@ public:
   //     ----------------------------------------
   //     {
   //       auto w = pqrs::make_thread_wait();
-  //       std::thread th([w] {
+  //       std::thread t([w] {
   //         w->notify();
-  //       })
+  //       });
+  //       t.detach();
   //       w->wait_notice();
-  //       th.join();
   //     }
   //     ----------------------------------------
 
