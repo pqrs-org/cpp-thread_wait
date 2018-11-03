@@ -15,7 +15,7 @@ public:
   // We have to use shared_ptr to avoid SEGV from a spuriously wake.
   //
   // Note:
-  //   wait::notify rarely causes SEGV unless we use shared_ptr in the following case.
+  //   If we don't use shared_ptr, `thread_wait::notify` rarely causes SEGV in the following case.
   //
   //   1. `notify` set notify_ = true.
   //   2. `wait_notice` exits by spuriously wake.
@@ -25,22 +25,24 @@ public:
   //   A bad example:
   //     ----------------------------------------
   //     {
-  //       wait w;
+  //       auto w = pqrs::thread_wait();
   //       std::thread th([&w] {
   //         w.notify(); // `notify` rarely causes SEGV.
   //       })
   //       w.wait_notice();
+  //       th.join();
   //     }
   //     ----------------------------------------
   //
   //   A good example:
   //     ----------------------------------------
   //     {
-  //       auto w = make_wait();
+  //       auto w = pqrs::make_thread_wait();
   //       std::thread th([w] {
   //         w->notify();
   //       })
   //       w->wait_notice();
+  //       th.join();
   //     }
   //     ----------------------------------------
 
