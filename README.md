@@ -10,6 +10,20 @@ You can wait another thread by using the following methods.
 - `pqrs::thread_wait::wait_notice`
 - `pqrs::thread_wait::notify`
 
+## Install
+
+### Manual install
+
+Copy `include/pqrs` directory into your include directory.
+
+### Using package manager
+
+You can also install `include/pqrs` by using [cget](https://github.com/pfultz2/cget).
+
+```shell
+cget install pqrs-org/cpp-thread_wait@v1.0.0 --cmake header
+```
+
 ## Usage
 
 ```cpp
