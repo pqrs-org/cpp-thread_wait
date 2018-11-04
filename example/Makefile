@@ -5,7 +5,7 @@ all:
 		&& make
 
 clean:
-	rm -r build
+	rm -rf build
 
 run:
 	./build/example
