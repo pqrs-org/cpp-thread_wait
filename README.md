@@ -12,17 +12,18 @@ You can wait another thread by using the following methods.
 
 ## Install
 
+### Using package manager
+
+You can install `include/pqrs` by using [cget](https://github.com/pfultz2/cget).
+
+```shell
+cget install pqrs-org/cpp-cget-recipes
+cget install pqrs-org/cpp-thread_wait
+```
+
 ### Manual install
 
 Copy `include/pqrs` directory into your include directory.
-
-### Using package manager
-
-You can also install `include/pqrs` by using [cget](https://github.com/pfultz2/cget).
-
-```shell
-cget install pqrs-org/cpp-thread_wait@v1.2.0 --cmake header
-```
 
 ## Usage
 
