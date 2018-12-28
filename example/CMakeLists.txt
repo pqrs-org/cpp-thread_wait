@@ -8,7 +8,7 @@ add_compile_options(-O2)
 
 project (example)
 
-include_directories(SYSTEM ${CMAKE_CURRENT_LIST_DIR}/../include)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../include)
 
 add_executable(
   example
