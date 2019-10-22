@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/pqrs-org/cpp-thread_wait.svg?branch=master)](https://travis-ci.com/pqrs-org/cpp-thread_wait)
+[![Build Status](https://github.com/pqrs-org/cpp-thread_wait/workflows/CI/badge.svg)](https://github.com/pqrs-org/cpp-thread_wait/actions)
 [![License](https://img.shields.io/badge/license-Boost%20Software%20License-blue.svg)](https://github.com/pqrs-org/cpp-thread_wait/blob/master/LICENSE.md)
 
 # cpp-thread_wait
