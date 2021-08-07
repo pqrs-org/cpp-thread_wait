@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/pqrs-org/cpp-thread_wait/workflows/CI/badge.svg)](https://github.com/pqrs-org/cpp-thread_wait/actions)
-[![License](https://img.shields.io/badge/license-Boost%20Software%20License-blue.svg)](https://github.com/pqrs-org/cpp-thread_wait/blob/master/LICENSE.md)
+[![License](https://img.shields.io/badge/license-Boost%20Software%20License-blue.svg)](https://github.com/pqrs-org/cpp-thread_wait/blob/main/LICENSE.md)
 
 # cpp-thread_wait
 
