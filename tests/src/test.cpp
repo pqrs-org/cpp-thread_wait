@@ -25,6 +25,32 @@ int main(void) {
     }
   };
 
+  "thread_wait (multiple thread)"_test = [] {
+    {
+      auto w = pqrs::make_thread_wait();
+      auto t1 = std::thread([w] {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        w->notify();
+      });
+
+      auto t2 = std::thread([w] {
+        std::cout << "waiting (t2)" << std::endl;
+        w->wait_notice();
+        std::cout << "done (t2)" << std::endl;
+      });
+
+      auto t3 = std::thread([w] {
+        std::cout << "waiting (t3)" << std::endl;
+        w->wait_notice();
+        std::cout << "done (t3)" << std::endl;
+      });
+
+      t1.join();
+      t2.join();
+      t3.join();
+    }
+  };
+
   "stress testing"_test = [] {
     for (int i = 0; i < 10000; ++i) {
       auto w = pqrs::make_thread_wait();
