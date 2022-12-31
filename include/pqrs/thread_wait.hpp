@@ -22,7 +22,7 @@ public:
   //   1. `notify` set notify_ = true.
   //   2. `wait_notice` exits by spuriously wake.
   //   3. `wait` is destructed.
-  //   4. `notify` calls `cv_.notify_one` with released `cv_`. (SEGV)
+  //   4. `notify` calls `cv_.notify_all` with released `cv_`. (SEGV)
   //
   //   A bad example:
   //     ----------------------------------------
@@ -73,7 +73,7 @@ public:
       notify_ = true;
     }
 
-    cv_.notify_one();
+    cv_.notify_all();
   }
 
 private:
