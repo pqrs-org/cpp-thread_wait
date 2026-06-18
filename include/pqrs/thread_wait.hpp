@@ -48,17 +48,17 @@ public:
   //     }
   //     ----------------------------------------
 
-  static std::shared_ptr<thread_wait> make_thread_wait(void) {
+  static std::shared_ptr<thread_wait> make_thread_wait() {
     struct impl : thread_wait {
-      impl(void) : thread_wait() {}
+      impl() : thread_wait() {}
     };
     return std::make_shared<impl>();
   }
 
-  virtual ~thread_wait(void) {
+  virtual ~thread_wait() {
   }
 
-  void wait_notice(void) {
+  void wait_notice() {
     std::unique_lock<std::mutex> lock(mutex_);
 
     cv_.wait(lock, [this] {
@@ -66,7 +66,7 @@ public:
     });
   }
 
-  void notify(void) {
+  void notify() {
     {
       std::lock_guard<std::mutex> lock(mutex_);
 
@@ -77,7 +77,7 @@ public:
   }
 
 private:
-  thread_wait(void) : notify_(false) {
+  thread_wait() : notify_(false) {
   }
 
   bool notify_;
@@ -85,7 +85,7 @@ private:
   std::condition_variable cv_;
 };
 
-inline std::shared_ptr<thread_wait> make_thread_wait(void) {
+inline std::shared_ptr<thread_wait> make_thread_wait() {
   return thread_wait::make_thread_wait();
 }
 } // namespace pqrs

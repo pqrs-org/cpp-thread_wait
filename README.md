@@ -22,7 +22,7 @@ Copy `include/pqrs` and `vendor/vendor/include` directories into your include di
 #include <pqrs/thread_wait.hpp>
 #include <thread>
 
-int main(void) {
+int main() {
   int i = 0;
 
   // Create `pqrs::thread_wait`.

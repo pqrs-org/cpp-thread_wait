@@ -3,7 +3,7 @@
 #include <pqrs/thread_wait.hpp>
 #include <thread>
 
-int main(void) {
+int main() {
   int i = 0;
 
   // Create `pqrs::thread_wait`.
