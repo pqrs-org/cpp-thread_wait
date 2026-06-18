@@ -2,6 +2,14 @@
 #include <chrono>
 #include <pqrs/thread_wait.hpp>
 #include <thread>
+#include <type_traits>
+
+static_assert(std::is_final_v<pqrs::thread_wait>);
+static_assert(!std::is_default_constructible_v<pqrs::thread_wait>);
+static_assert(!std::is_copy_constructible_v<pqrs::thread_wait>);
+static_assert(!std::is_move_constructible_v<pqrs::thread_wait>);
+static_assert(!std::is_copy_assignable_v<pqrs::thread_wait>);
+static_assert(!std::is_move_assignable_v<pqrs::thread_wait>);
 
 int main(void) {
   using namespace boost::ut;
@@ -23,6 +31,13 @@ int main(void) {
 
       t.join();
     }
+  };
+
+  "thread_wait (notify before wait)"_test = [] {
+    auto w = pqrs::make_thread_wait();
+
+    w->notify();
+    w->wait_notice();
   };
 
   "thread_wait (multiple thread)"_test = [] {

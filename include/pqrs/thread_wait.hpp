@@ -8,81 +8,49 @@
 
 // `pqrs::thread_wait` can be used safely in a multi-threaded environment.
 
+#include <atomic>
 #include <memory>
-#include <mutex>
 
 namespace pqrs {
-class thread_wait {
+class thread_wait final {
+  struct constructor_key {
+  private:
+    constructor_key() = default;
+
+    friend class thread_wait;
+  };
+
 public:
-  // We have to use shared_ptr to avoid SEGV from a spuriously wake.
-  //
-  // Note:
-  //   If we don't use shared_ptr, `thread_wait::notify` rarely causes SEGV in the following case.
-  //
-  //   1. `notify` set notify_ = true.
-  //   2. `wait_notice` exits by spuriously wake.
-  //   3. `wait` is destructed.
-  //   4. `notify` calls `cv_.notify_all` with released `cv_`. (SEGV)
-  //
-  //   A bad example:
-  //     ----------------------------------------
-  //     {
-  //       pqrs::thread_wait w;
-  //       std::thread t([&w] {
-  //         w.notify(); // `notify` rarely causes SEGV.
-  //       });
-  //       t.detach();
-  //       w.wait_notice();
-  //     }
-  //     ----------------------------------------
-  //
-  //   A good example:
-  //     ----------------------------------------
-  //     {
-  //       auto w = pqrs::make_thread_wait();
-  //       std::thread t([w] {
-  //         w->notify();
-  //       });
-  //       t.detach();
-  //       w->wait_notice();
-  //     }
-  //     ----------------------------------------
-
+  // Keep thread_wait owned by shared_ptr while another thread may call notify.
+  // A waiter can return immediately after notify_ is set to true, and the object
+  // must remain alive until the notifier finishes notify_.notify_all().
   static std::shared_ptr<thread_wait> make_thread_wait() {
-    struct impl : thread_wait {
-      impl() : thread_wait() {}
-    };
-    return std::make_shared<impl>();
+    return std::make_shared<thread_wait>(constructor_key{});
   }
 
-  virtual ~thread_wait() {
+  explicit thread_wait(constructor_key) {
   }
+
+  ~thread_wait() = default;
+
+  thread_wait(const thread_wait&) = delete;
+  thread_wait(thread_wait&&) = delete;
+  thread_wait& operator=(const thread_wait&) = delete;
+  thread_wait& operator=(thread_wait&&) = delete;
 
   void wait_notice() {
-    std::unique_lock<std::mutex> lock(mutex_);
-
-    cv_.wait(lock, [this] {
-      return notify_;
-    });
+    while (!notify_.load(std::memory_order_acquire)) {
+      notify_.wait(false, std::memory_order_acquire);
+    }
   }
 
   void notify() {
-    {
-      std::lock_guard<std::mutex> lock(mutex_);
-
-      notify_ = true;
-    }
-
-    cv_.notify_all();
+    notify_.store(true, std::memory_order_release);
+    notify_.notify_all();
   }
 
 private:
-  thread_wait() : notify_(false) {
-  }
-
-  bool notify_;
-  std::mutex mutex_;
-  std::condition_variable cv_;
+  std::atomic<bool> notify_{false};
 };
 
 inline std::shared_ptr<thread_wait> make_thread_wait() {

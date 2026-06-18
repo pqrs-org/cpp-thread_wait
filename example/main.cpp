@@ -23,7 +23,7 @@ int main() {
   // Wait until another thread calls `pqrs::thread_wait::notify`.
   w->wait_notice();
 
-  std::cout << i << std::endl; // 500
+  std::cout << i << std::endl; // 100
 
   thread.join();
 

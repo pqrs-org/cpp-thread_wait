@@ -3,7 +3,7 @@
 
 # cpp-thread_wait
 
-A wrapper of `std::condition_variable::wait`.
+A small one-shot thread notification helper.
 
 You can wait another thread by using the following methods.
 
@@ -42,7 +42,7 @@ int main() {
   // Wait until another thread calls `pqrs::thread_wait::notify`.
   w->wait_notice();
 
-  std::cout << i << std::endl; // 500
+  std::cout << i << std::endl; // 100
 
   thread.join();
 
