@@ -28,7 +28,7 @@ public:
     return std::make_shared<thread_wait>(constructor_key{});
   }
 
-  explicit thread_wait(constructor_key) {
+  explicit thread_wait(constructor_key) noexcept {
   }
 
   ~thread_wait() = default;
@@ -38,13 +38,13 @@ public:
   thread_wait& operator=(const thread_wait&) = delete;
   thread_wait& operator=(thread_wait&&) = delete;
 
-  void wait_notice() {
+  void wait_notice() noexcept {
     while (!notify_.load(std::memory_order_acquire)) {
       notify_.wait(false, std::memory_order_acquire);
     }
   }
 
-  void notify() {
+  void notify() noexcept {
     notify_.store(true, std::memory_order_release);
     notify_.notify_all();
   }

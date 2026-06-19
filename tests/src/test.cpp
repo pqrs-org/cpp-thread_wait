@@ -1,3 +1,5 @@
+#include <array>
+#include <atomic>
 #include <boost/ut.hpp>
 #include <chrono>
 #include <pqrs/thread_wait.hpp>
@@ -11,7 +13,7 @@ static_assert(!std::is_move_constructible_v<pqrs::thread_wait>);
 static_assert(!std::is_copy_assignable_v<pqrs::thread_wait>);
 static_assert(!std::is_move_assignable_v<pqrs::thread_wait>);
 
-int main(void) {
+int main() {
   using namespace boost::ut;
   using namespace boost::ut::literals;
 
@@ -40,30 +42,40 @@ int main(void) {
     w->wait_notice();
   };
 
-  "thread_wait (multiple thread)"_test = [] {
+  "thread_wait (multiple waiters)"_test = [] {
     {
       auto w = pqrs::make_thread_wait();
-      auto t1 = std::thread([w] {
+      std::array<std::atomic_bool, 2> completed{};
+
+      auto notifier = std::thread([w] {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         w->notify();
       });
 
-      auto t2 = std::thread([w] {
-        std::cout << "waiting (t2)" << std::endl;
+      auto waiter1 = std::thread([&completed, w] {
         w->wait_notice();
-        std::cout << "done (t2)" << std::endl;
+        completed[0].store(true, std::memory_order_release);
       });
 
-      auto t3 = std::thread([w] {
-        std::cout << "waiting (t3)" << std::endl;
+      auto waiter2 = std::thread([&completed, w] {
         w->wait_notice();
-        std::cout << "done (t3)" << std::endl;
+        completed[1].store(true, std::memory_order_release);
       });
 
-      t1.join();
-      t2.join();
-      t3.join();
+      notifier.join();
+      waiter1.join();
+      waiter2.join();
+
+      expect(completed[0].load(std::memory_order_acquire));
+      expect(completed[1].load(std::memory_order_acquire));
     }
+  };
+
+  "thread_wait (noexcept)"_test = [] {
+    auto w = pqrs::make_thread_wait();
+
+    expect(noexcept(w->notify()));
+    expect(noexcept(w->wait_notice()));
   };
 
   "stress testing"_test = [] {
