@@ -42,6 +42,37 @@ int main() {
     w->wait_notice();
   };
 
+  "thread_wait (wait_notice_for)"_test = [] {
+    {
+      int count = 0;
+      auto w = pqrs::make_thread_wait();
+      auto t = std::thread([&count, w] {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        ++count;
+        w->notify();
+      });
+      expect(count == 0);
+
+      expect(w->wait_notice_for(std::chrono::seconds(1)));
+      expect(count == 1);
+
+      t.join();
+    }
+  };
+
+  "thread_wait (wait_notice_for timeout)"_test = [] {
+    auto w = pqrs::make_thread_wait();
+
+    expect(!w->wait_notice_for(std::chrono::milliseconds(10)));
+  };
+
+  "thread_wait (notify before wait_notice_for)"_test = [] {
+    auto w = pqrs::make_thread_wait();
+
+    w->notify();
+    expect(w->wait_notice_for(std::chrono::seconds(1)));
+  };
+
   "thread_wait (multiple waiters)"_test = [] {
     {
       auto w = pqrs::make_thread_wait();
@@ -73,9 +104,11 @@ int main() {
 
   "thread_wait (noexcept)"_test = [] {
     auto w = pqrs::make_thread_wait();
+    auto timeout_duration = std::chrono::seconds(1);
 
     expect(noexcept(w->notify()));
     expect(noexcept(w->wait_notice()));
+    expect(noexcept(w->wait_notice_for(timeout_duration)));
   };
 
   "stress testing"_test = [] {

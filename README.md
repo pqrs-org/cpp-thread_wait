@@ -8,6 +8,7 @@ A small one-shot thread notification helper.
 You can wait another thread by using the following methods.
 
 - `pqrs::thread_wait::wait_notice`
+- `pqrs::thread_wait::wait_notice_for`
 - `pqrs::thread_wait::notify`
 
 ## Install
@@ -43,6 +44,11 @@ int main() {
   w->wait_notice();
 
   std::cout << i << std::endl; // 100
+
+  // You can also wait with a timeout.
+  auto w2 = pqrs::make_thread_wait();
+  auto notified = w2->wait_notice_for(std::chrono::seconds(1));
+  std::cout << "notified: " << std::boolalpha << notified << std::endl; // false
 
   thread.join();
 

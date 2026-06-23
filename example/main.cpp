@@ -25,6 +25,11 @@ int main() {
 
   std::cout << i << std::endl; // 100
 
+  // You can also wait with a timeout.
+  auto w2 = pqrs::make_thread_wait();
+  auto notified = w2->wait_notice_for(std::chrono::seconds(1));
+  std::cout << "notified: " << std::boolalpha << notified << std::endl; // false
+
   thread.join();
 
   return 0;
